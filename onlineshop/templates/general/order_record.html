@@ -1,0 +1,99 @@
+{% extends "general/layout.html" %}
+
+{% block head_title %}Historial de pedidos{% endblock %}
+
+{% block page_content %}
+<div class="container">
+  <h1>Historial de pedidos</h1>
+
+  {% include "_includes/_messages.html" %}
+
+  {% if orders %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Método de pago</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+          <td>{{ order.get_payment_method_display }}</td>
+          <td>{{ order.total }} USD</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#orderModal{{ order.id }}">
+              Ver detalles
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+    {% for order in orders %}
+    <div class="modal fade" id="orderModal{{ order.id }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Pedido #{{ order.id }} - {{ order.created_at|date:"d/m/Y H:i" }}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body">
+            <p><strong>Método de pago:</strong> {{ order.get_payment_method_display }}</p>
+            <p><strong>Total:</strong> {{ order.total }} Bs</p>
+
+            <hr>
+
+            <h6>Productos</h6>
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio unitario</th>
+                  <th>Cantidad</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                  <td>{{ item.product_name }}</td>
+                  <td>{{ item.unit_price }} Bs</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.total_price }} Bs</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Cerrar
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  {% else %}
+    <p>No tienes pedidos registrados todavía.</p>
+  {% endif %}
+</div>
+{% endblock %}

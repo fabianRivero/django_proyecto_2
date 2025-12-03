@@ -113,7 +113,7 @@ def order_confirmation(request):
                 messages.add_message(request, messages.ERROR, "Completa los datos de la tarjeta.")
                 return render(
                     request,
-                    "general/checkout.html",
+                    "general/order_confirmation.html",
                     {"cart": cart, "items": items, "total": total},
                 )
         elif payment_method == "paypal":
@@ -121,11 +121,9 @@ def order_confirmation(request):
                 messages.add_message(request, messages.ERROR, "Ingresa el correo de PayPal.")      
                 return render(
                     request,
-                    "general/checkout.html",
+                    "general/order_confirmation.html",
                     {"cart": cart, "items": items, "total": total},
                 )
-
-        items.delete()
 
         order = Order.objects.create(
             user=request.user,
