@@ -1,0 +1,29 @@
+<div class="modal fade" id="productModal{{ product.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ product.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                <img src="{{ product.image.url }}" alt="Imagen de {{ product.name }}" class="img-fluid mb-3">
+                <p><strong>Categoría:</strong> {{ product.category.name }}</p>
+                <p><strong>Precio:</strong> {{ product.price }} USD</p>
+                <p><strong>Stock:</strong> {{ product.stock }}</p>
+                <p><strong>Descripción:</strong></p>
+                <p>{{ product.description }}</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">
+                        Añadir al carrito
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+<style>
+  .cart{
+    width: 30px;
+  }
+
+  nav{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  ul{
+    display: flex;
+    gap: 20px;
+  }
+
+  ul{
+    list-style: none;
+  }
+</style>
+
+<header>
+  <div class="container">
+    <h1>Online Shop</h1>
+    <nav>
+      <ul>
+          {% if not request.user.is_authenticated %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'register' %}">Registro</a></li>
+          {% endif %}
+          <li><a href="{% url 'home' %}">Inicio</a></li>
+          {% if request.user.is_authenticated %}
+          <li>
+          </li>
+          <li><a href="{% url 'logout' %}">Historial de pedidos</a></li>
+          <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+          {% endif %}
+      </ul>
+
+        <a href="{% url 'cart_detail' %}">
+          {% if cart_item_count and cart_item_count > 0 %}
+            <img class="cart" src="media/icons/carrito_lleno.png" alt="Carrito de compras lleno">
+          {% else %}
+              <img class="cart" src="media/icons/carro-de-la-compra.png" alt="Carrito de compras">    
+          {% endif %}
+        </a>
+    </nav>
+  </div>
+</header>

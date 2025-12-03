@@ -1,0 +1,119 @@
+{% extends "general/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Pagina de inicio{% endblock %}
+
+{% block page_content %}
+
+<style>
+    section{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-grid {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .product-grid li {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        justify-content: space-between;
+
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+        object-fit: cover;
+    }
+
+    .pagination{
+        font-size: 20px;
+    }
+
+    .buttons{
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .caracteristics{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+</style>
+
+<div class="container">
+    <h1>Homepage</h1>
+    {% include "_includes/_messages.html" %}
+    <form method="get">
+        {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+    <section>
+        <ul class="product-grid">
+        {% for product in products %}
+            <li>
+                <img src="{{ product.image.url }}" alt="Imagen de {{ product.name }}">
+                <div class="caracteristics">
+                    <p>{{ product.category.name }}</p>
+                    <strong>{{ product.name }}</strong> 
+                    <strong>{{ product.price }} USD</strong>
+                    <div class="buttons">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#productModal{{ product.id }}">
+                            Detalles
+                        </button>
+                        
+                        <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">
+                                Añadir al carrito
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                {% include "_includes/_product_modal.html" with product=product %}
+            </li>
+        {% empty %}
+            <li>No se encontraron productos.</li>
+        {% endfor %}
+        </ul>
+
+        <hr>
+
+        <div class="pagination">
+        {% if is_paginated %}
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&category={{ current_category }}">Anterior</a>
+            {% endif %}
+
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&category={{ current_category }}">Siguiente</a>
+            {% endif %}
+        {% endif %}
+        </div>
+    </section>
+    
+</div>
+
+<hr>
+{% endblock %}

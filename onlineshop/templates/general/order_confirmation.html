@@ -1,0 +1,115 @@
+{% extends "general/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Confirmación de compra{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    {% include "_includes/_messages.html" %}
+
+    <h1>Confirmar compra</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio unitario</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.unit_price }} USD</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.total_price }} USD</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <strong>Total a pagar: {{ total }} USD</strong>
+
+    <hr>
+
+    <h3>Simulación de pasarela de pago</h3>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label"><strong>Método de pago</strong></label>
+            <br>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input"
+                       type="radio"
+                       name="payment_method"
+                       id="pay_card"
+                       value="card"
+                       checked>
+                <label class="form-check-label" for="pay_card">
+                    Tarjeta de crédito / débito
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input"
+                       type="radio"
+                       name="payment_method"
+                       id="pay_paypal"
+                       value="paypal">
+                <label class="form-check-label" for="pay_paypal">
+                    PayPal
+                </label>
+            </div>
+        </div>
+
+        <div id="card-fields">
+            <div class="mb-3">
+                <label for="card_name" class="form-label">Nombre en la tarjeta</label>
+                <input type="text" class="form-control" id="card_name" name="card_name">
+            </div>
+            <div class="mb-3">
+                <label for="card_number" class="form-label">Número de tarjeta</label>
+                <input type="text" class="form-control" id="card_number" name="card_number">
+            </div>
+        </div>
+
+        <div id="paypal-fields" style="display: none;">
+            <div class="mb-3">
+                <label for="paypal_email" class="form-label">Correo de PayPal</label>
+                <input type="email" class="form-control" id="paypal_email" name="paypal_email">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Pagar {{ total }} USD
+        </button>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const payCard = document.getElementById("pay_card");
+    const payPaypal = document.getElementById("pay_paypal");
+    const cardFields = document.getElementById("card-fields");
+    const paypalFields = document.getElementById("paypal-fields");
+
+    function toggleFields() {
+        if (payCard.checked) {
+            cardFields.style.display = "block";
+            paypalFields.style.display = "none";
+        } else {
+            cardFields.style.display = "none";
+            paypalFields.style.display = "block";
+        }
+    }
+
+    payCard.addEventListener("change", toggleFields);
+    payPaypal.addEventListener("change", toggleFields);
+
+    toggleFields();
+});
+</script>
+{% endblock %}
